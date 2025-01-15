@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi import APIRouter, HTTPException, Request, Response, Depends
 from fastapi.responses import JSONResponse
 from app.services import OpenAIClient
 from app.db.base import get_db
 from app.model import Conversation
 from sqlalchemy.future import select
+from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from typing import List
 
@@ -11,8 +12,9 @@ router = APIRouter()
 
 openai_client = OpenAIClient()
 
+
 @router.post("/chat")
-async def chat(message: str, request: Request):
+async def chat(message: str, db: Session = Depends(get_db)):
     db = get_db()
     conversation = Conversation(
         message=message,
@@ -23,7 +25,10 @@ async def chat(message: str, request: Request):
     await db.commit()
 
     result = await db.execute(
-        select(Conversation).filter_by(user_id=conversation.user_id).order_by(Conversation.created_at.desc()).limit(20)
+        select(Conversation)
+        .filter_by(user_id=conversation.user_id)
+        .order_by(Conversation.created_at.desc())
+        .limit(20)
     )
     history = result.scalars().all()
 

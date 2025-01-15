@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 
-from cute_chat.app.api import whatsapp_communication
+from app.api import cutechat
 from fastapi_pagination import add_pagination
 from fastapi.openapi.docs import get_redoc_html
 
@@ -21,7 +21,7 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-app.include_router(whatsapp_communication.router, prefix="/cute_chat/v1")
+app.include_router(cutechat.router, prefix="/cute_chat/v1")
 
 
 add_pagination(app)
