@@ -5,3 +5,4 @@ azure-search-documents==11.3.0
 sqlalchemy==1.4.26
 pydantic==1.8.2
 nltk==3.6.5
+redis
